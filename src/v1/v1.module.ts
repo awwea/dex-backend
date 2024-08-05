@@ -11,17 +11,17 @@ import { DexScreenerModule } from './dex-screener/dex-screener.module';
 import { ActivityModule } from './activity/activity.module';
 
 @Module({
-  imports: [
-    CmcModule,
-    RoiModule,
-    CoingeckoModule,
-    MarketRateModule,
-    DuneModule,
-    SimulatorModule,
-    AnalyticsModule,
-    DexScreenerModule,
-    ActivityModule,
-  ],
-  controllers: [V1Controller],
+    imports: [
+        CmcModule,
+        RoiModule,
+        CoingeckoModule,
+        MarketRateModule,
+        DuneModule,
+        SimulatorModule,
+        AnalyticsModule,
+        DexScreenerModule,
+        ActivityModule,
+    ],
+    controllers: [V1Controller],
 })
 export class V1Module {}

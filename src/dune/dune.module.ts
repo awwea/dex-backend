@@ -5,8 +5,8 @@ import { DuneService } from './dune.service';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [HttpModule],
-  providers: [DuneProvider, ConfigService, DuneService],
-  exports: [DuneProvider, DuneService],
+    imports: [HttpModule],
+    providers: [DuneProvider, ConfigService, DuneService],
+    exports: [DuneProvider, DuneService],
 })
 export class DuneModule {}

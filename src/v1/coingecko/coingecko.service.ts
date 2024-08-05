@@ -9,22 +9,22 @@ const TICKERS_CACHE_KEY = 'carbon:coingecko:tickers';
 
 @Injectable()
 export class CoingeckoService {
-  constructor(
-    @InjectRepository(Strategy) private strategy: Repository<Strategy>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+    constructor(
+        @InjectRepository(Strategy) private strategy: Repository<Strategy>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) {}
 
-  async update(): Promise<void> {
-    const tickers = await this.getTickers();
-    this.cacheManager.set(TICKERS_CACHE_KEY, tickers);
-  }
+    async update(): Promise<void> {
+        const tickers = await this.getTickers();
+        this.cacheManager.set(TICKERS_CACHE_KEY, tickers);
+    }
 
-  async getCachedTickers(): Promise<any> {
-    return this.cacheManager.get(TICKERS_CACHE_KEY);
-  }
+    async getCachedTickers(): Promise<any> {
+        return this.cacheManager.get(TICKERS_CACHE_KEY);
+    }
 
-  private async getTickers(): Promise<any> {
-    const query = `
+    private async getTickers(): Promise<any> {
+        const query = `
     with created_pairs as (
         Select token0, token1, 
         CAST(token0 as varchar) || '_' || CAST(token1 as varchar) as native_pair,
@@ -283,14 +283,14 @@ export class CoingeckoService {
     left join plus2_min2s pl on pl.native_pair = t.ticker_id
     `;
 
-    const result = await this.strategy.query(query);
-    result.forEach((r) => {
-      for (const [key, value] of Object.entries(r)) {
-        if (value === null) {
-          r[key] = 0;
-        }
-      }
-    });
-    return result;
-  }
+        const result = await this.strategy.query(query);
+        result.forEach((r) => {
+            for (const [key, value] of Object.entries(r)) {
+                if (value === null) {
+                    r[key] = 0;
+                }
+            }
+        });
+        return result;
+    }
 }

@@ -6,8 +6,8 @@ import { VoucherTransferEvent } from './voucher-transfer-event.entity';
 import { VoucherTransferEventService } from './voucher-transfer-event.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([VoucherTransferEvent]), HarvesterModule],
-  providers: [ConfigService, VoucherTransferEventService],
-  exports: [VoucherTransferEventService, TypeOrmModule.forFeature([VoucherTransferEvent])],
+    imports: [TypeOrmModule.forFeature([VoucherTransferEvent]), HarvesterModule],
+    providers: [ConfigService, VoucherTransferEventService],
+    exports: [VoucherTransferEventService, TypeOrmModule.forFeature([VoucherTransferEvent])],
 })
 export class VoucherTransferEventModule {}

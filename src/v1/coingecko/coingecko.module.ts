@@ -7,9 +7,9 @@ import { DuneModule } from '../../dune/dune.module';
 import { StrategyModule } from '../../strategy/strategy.module';
 
 @Module({
-  imports: [TokensTradedEventModule, PairModule, DuneModule, StrategyModule],
-  controllers: [CoinGeckoController],
-  providers: [CoingeckoService],
-  exports: [CoingeckoService],
+    imports: [TokensTradedEventModule, PairModule, DuneModule, StrategyModule],
+    controllers: [CoinGeckoController],
+    providers: [CoingeckoService],
+    exports: [CoingeckoService],
 })
 export class CoingeckoModule {}

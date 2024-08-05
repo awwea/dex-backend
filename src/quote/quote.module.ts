@@ -8,8 +8,8 @@ import { TokenModule } from '../token/token.module';
 import { CoinGeckoService } from './coingecko.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Quote]), RedisModule, TokenModule],
-  providers: [ConfigService, QuoteService, CoinGeckoService],
-  exports: [QuoteService, TypeOrmModule.forFeature([Quote]), CoinGeckoService],
+    imports: [TypeOrmModule.forFeature([Quote]), RedisModule, TokenModule],
+    providers: [ConfigService, QuoteService, CoinGeckoService],
+    exports: [QuoteService, TypeOrmModule.forFeature([Quote]), CoinGeckoService],
 })
 export class QuoteModule {}

@@ -5,8 +5,8 @@ import { Activity } from './activity.entity';
 import { LastProcessedBlockModule } from '../last-processed-block/last-processed-block.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Activity]), LastProcessedBlockModule],
-  providers: [ActivityService],
-  exports: [ActivityService],
+    imports: [TypeOrmModule.forFeature([Activity]), LastProcessedBlockModule],
+    providers: [ActivityService],
+    exports: [ActivityService],
 })
 export class ActivityModule {}

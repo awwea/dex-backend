@@ -6,8 +6,8 @@ import { HarvesterService } from './harvester.service';
 import { BlockModule } from '../block/block.module';
 
 @Module({
-  imports: [LastProcessedBlockModule, BlockchainConfigModule, BlockModule],
-  providers: [ConfigService, HarvesterService],
-  exports: [HarvesterService],
+    imports: [LastProcessedBlockModule, BlockchainConfigModule, BlockModule],
+    providers: [ConfigService, HarvesterService],
+    exports: [HarvesterService],
 })
 export class HarvesterModule {}

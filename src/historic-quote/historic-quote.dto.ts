@@ -5,17 +5,17 @@ import { IsAddress } from '../isAddress.validator';
 import { Type } from 'class-transformer';
 
 export class HistoricQuoteDto {
-  @IsAddress()
-  baseToken: string;
+    @IsAddress()
+    baseToken: string;
 
-  @IsAddress()
-  quoteToken: string;
+    @IsAddress()
+    quoteToken: string;
 
-  @IsNumber()
-  @Type(() => Number)
-  start: number;
+    @IsNumber()
+    @Type(() => Number)
+    start: number;
 
-  @IsNumber()
-  @Type(() => Number)
-  end: number;
+    @IsNumber()
+    @Type(() => Number)
+    end: number;
 }

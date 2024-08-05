@@ -6,11 +6,8 @@ import { PairCreatedEvent } from './pair-created-event.entity';
 import { PairCreatedEventService } from './pair-created-event.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PairCreatedEvent]), HarvesterModule],
-  providers: [ConfigService, PairCreatedEventService],
-  exports: [
-    PairCreatedEventService,
-    TypeOrmModule.forFeature([PairCreatedEvent]),
-  ],
+    imports: [TypeOrmModule.forFeature([PairCreatedEvent]), HarvesterModule],
+    providers: [ConfigService, PairCreatedEventService],
+    exports: [PairCreatedEventService, TypeOrmModule.forFeature([PairCreatedEvent])],
 })
 export class PairCreatedEventModule {}

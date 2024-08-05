@@ -6,9 +6,9 @@ import { HistoricQuote } from './historic-quote.entity';
 import { HistoricQuoteController } from './historic-quote.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([HistoricQuote]), CoinMarketCapModule],
-  providers: [HistoricQuoteService],
-  exports: [HistoricQuoteService],
-  controllers: [HistoricQuoteController],
+    imports: [TypeOrmModule.forFeature([HistoricQuote]), CoinMarketCapModule],
+    providers: [HistoricQuoteService],
+    exports: [HistoricQuoteService],
+    controllers: [HistoricQuoteController],
 })
 export class HistoricQuoteModule {}

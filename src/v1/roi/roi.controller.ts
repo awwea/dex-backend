@@ -4,12 +4,12 @@ import { RoiService } from './roi.service';
 
 @Controller({ version: '1', path: 'roi' })
 export class RoiController {
-  constructor(private roiService: RoiService) {}
+    constructor(private roiService: RoiService) {}
 
-  @Get()
-  @CacheTTL(1 * 1000)
-  @Header('Cache-Control', 'public, max-age=60')
-  async roi(): Promise<any> {
-    return this.roiService.getCachedROI();
-  }
+    @Get()
+    @CacheTTL(1 * 1000)
+    @Header('Cache-Control', 'public, max-age=60')
+    async roi(): Promise<any> {
+        return this.roiService.getCachedROI();
+    }
 }

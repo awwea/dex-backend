@@ -10,15 +10,15 @@ import { StrategyUpdatedEventModule } from '../events/strategy-updated-event/str
 import { StrategyDeletedEventModule } from '../events/strategy-deleted-event/strategy-deleted-event.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Strategy]),
-    LastProcessedBlockModule,
-    RedisModule,
-    StrategyCreatedEventModule,
-    StrategyUpdatedEventModule,
-    StrategyDeletedEventModule,
-  ],
-  providers: [ConfigService, StrategyService],
-  exports: [StrategyService, TypeOrmModule.forFeature([Strategy])],
+    imports: [
+        TypeOrmModule.forFeature([Strategy]),
+        LastProcessedBlockModule,
+        RedisModule,
+        StrategyCreatedEventModule,
+        StrategyUpdatedEventModule,
+        StrategyDeletedEventModule,
+    ],
+    providers: [ConfigService, StrategyService],
+    exports: [StrategyService, TypeOrmModule.forFeature([Strategy])],
 })
 export class StrategyModule {}

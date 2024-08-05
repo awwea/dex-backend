@@ -5,8 +5,8 @@ import { CoinMarketCapService } from './coinmarketcap.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule],
-  providers: [CoinMarketCapService],
-  exports: [CoinMarketCapService],
+    imports: [ConfigModule],
+    providers: [CoinMarketCapService],
+    exports: [CoinMarketCapService],
 })
 export class CoinMarketCapModule {}

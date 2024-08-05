@@ -6,9 +6,9 @@ import { BlockModule } from '../../block/block.module';
 import { TokenModule } from '../../token/token.module';
 
 @Module({
-  imports: [StrategyModule, BlockModule, TokenModule],
-  providers: [DexScreenerService],
-  controllers: [DexScreenerController],
-  exports: [DexScreenerService],
+    imports: [StrategyModule, BlockModule, TokenModule],
+    providers: [DexScreenerService],
+    controllers: [DexScreenerController],
+    exports: [DexScreenerService],
 })
 export class DexScreenerModule {}

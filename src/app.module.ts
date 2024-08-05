@@ -21,93 +21,93 @@ import { HistoricQuoteModule } from './historic-quote/historic-quote.module';
 import { ActivityModule } from './activity/activity.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService): Promise<any> => {
-        let url: string;
-        let ssl: any;
-        const dbSync = configService.get('DB_SYNC') === '1' ? true : false;
-        if (process.env.NODE_ENV === 'production') {
-          const secrets = new SecretManagerServiceClient();
-          let [version] = await secrets.accessSecretVersion({
-            name: configService.get('CARBON_BACKEND_SQL_URL'),
-          });
-          url = version.payload.data.toString();
-          [version] = await secrets.accessSecretVersion({
-            name: configService.get('CARBON_BACKEND_SQL_CERTIFICATION'),
-          });
-          ssl = {
-            ca: version.payload.data.toString(),
-            ciphers: [
-              'ECDHE-RSA-AES128-SHA256',
-              'DHE-RSA-AES128-SHA256',
-              'AES128-GCM-SHA256',
-              '!RC4', // RC4 be gone
-              'HIGH',
-              '!MD5',
-              '!aNULL',
-            ].join(':'),
-            honorCipherOrder: true,
-          };
-        } else {
-          url = configService.get('CARBON_BACKEND_SQL_URL');
-        }
-        return {
-          type: 'postgres',
-          url,
-          entities: [__dirname + '/**/*.entity.js'],
-          migrations: [__dirname + '/migrations/*.js'],
-          cli: {
-            migrationsDir: 'migrations',
-          },
-          synchronize: dbSync,
-          ssl,
-          // logging: true,
-        };
-      },
-    }),
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      isGlobal: true,
-      useFactory: async (configService: ConfigService) => {
-        if (process.env.NODE_ENV === 'development') {
-          return {
-            ttl: 0, // Set TTL to 0 to effectively disable caching
-          };
-        }
-        return {
-          store: await redisStore({
-            url: configService.get('CARBON_REDIS_URL'),
-          }),
-          ttl: 300,
-        };
-      },
-      inject: [ConfigService],
-    }),
-    ScheduleModule.forRoot(),
-    RedisModule,
-    LastProcessedBlockModule,
-    BlockModule,
-    HarvesterModule,
-    PairCreatedEventModule,
-    StrategyCreatedEventModule,
-    PairModule,
-    TokenModule,
-    UpdaterModule,
-    V1Module,
-    DuneModule,
-    HistoricQuoteModule,
-    ActivityModule,
-  ],
+    imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService): Promise<any> => {
+                let url: string;
+                let ssl: any;
+                const dbSync = configService.get('DB_SYNC') === '1' ? true : false;
+                if (process.env.NODE_ENV === 'production') {
+                    const secrets = new SecretManagerServiceClient();
+                    let [version] = await secrets.accessSecretVersion({
+                        name: configService.get('CARBON_BACKEND_SQL_URL'),
+                    });
+                    url = version.payload.data.toString();
+                    [version] = await secrets.accessSecretVersion({
+                        name: configService.get('CARBON_BACKEND_SQL_CERTIFICATION'),
+                    });
+                    ssl = {
+                        ca: version.payload.data.toString(),
+                        ciphers: [
+                            'ECDHE-RSA-AES128-SHA256',
+                            'DHE-RSA-AES128-SHA256',
+                            'AES128-GCM-SHA256',
+                            '!RC4', // RC4 be gone
+                            'HIGH',
+                            '!MD5',
+                            '!aNULL',
+                        ].join(':'),
+                        honorCipherOrder: true,
+                    };
+                } else {
+                    url = configService.get('CARBON_BACKEND_SQL_URL');
+                }
+                return {
+                    type: 'postgres',
+                    url,
+                    entities: [__dirname + '/**/*.entity.js'],
+                    migrations: [__dirname + '/migrations/*.js'],
+                    cli: {
+                        migrationsDir: 'migrations',
+                    },
+                    synchronize: dbSync,
+                    ssl,
+                    // logging: true,
+                };
+            },
+        }),
+        CacheModule.registerAsync({
+            imports: [ConfigModule],
+            isGlobal: true,
+            useFactory: async (configService: ConfigService) => {
+                if (process.env.NODE_ENV === 'development') {
+                    return {
+                        ttl: 0, // Set TTL to 0 to effectively disable caching
+                    };
+                }
+                return {
+                    store: await redisStore({
+                        url: configService.get('CARBON_REDIS_URL'),
+                    }),
+                    ttl: 300,
+                };
+            },
+            inject: [ConfigService],
+        }),
+        ScheduleModule.forRoot(),
+        RedisModule,
+        LastProcessedBlockModule,
+        BlockModule,
+        HarvesterModule,
+        PairCreatedEventModule,
+        StrategyCreatedEventModule,
+        PairModule,
+        TokenModule,
+        UpdaterModule,
+        V1Module,
+        DuneModule,
+        HistoricQuoteModule,
+        ActivityModule,
+    ],
 
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
-  ],
+    providers: [
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: CacheInterceptor,
+        },
+    ],
 })
 export class AppModule {}

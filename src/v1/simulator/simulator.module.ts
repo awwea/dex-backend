@@ -7,13 +7,13 @@ import { PairTradingFeePpmUpdatedEventModule } from '../../events/pair-trading-f
 import { HistoricQuoteModule } from '../../historic-quote/historic-quote.module';
 
 @Module({
-  imports: [
-    CoinMarketCapModule,
-    TradingFeePpmUpdatedEventModule,
-    PairTradingFeePpmUpdatedEventModule,
-    HistoricQuoteModule,
-  ],
-  controllers: [SimulatorController, SimulatorControllerDeprecated],
-  providers: [SimulatorService],
+    imports: [
+        CoinMarketCapModule,
+        TradingFeePpmUpdatedEventModule,
+        PairTradingFeePpmUpdatedEventModule,
+        HistoricQuoteModule,
+    ],
+    controllers: [SimulatorController, SimulatorControllerDeprecated],
+    providers: [SimulatorService],
 })
 export class SimulatorModule {}

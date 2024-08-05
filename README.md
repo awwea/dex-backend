@@ -6,11 +6,11 @@ Carbon Backend, built with [Nest.js](https://nestjs.com), serves as a specialize
 
 Before setting up Carbon Backend, ensure you have the following prerequisites:
 
-- **[TimescaleDB](https://docs.timescale.com/self-hosted/latest/install)**: Ensure TimescaleDB is properly installed and running.
-- **[Redis](https://redis.io/docs/install/install-stack)**: Ensure Redis is properly installed and running.
-- **[CoinGecko](https://www.coingecko.com/en/api)**: Obtain an API key from CoinGecko.
-- **[CoinMarketCap](https://www.coingecko.com/en/api)**: Obtain an API key from CoinMarketCap.
-- **Python 3 (Optional)**: Required for the simulator.
+-   **[TimescaleDB](https://docs.timescale.com/self-hosted/latest/install)**: Ensure TimescaleDB is properly installed and running.
+-   **[Redis](https://redis.io/docs/install/install-stack)**: Ensure Redis is properly installed and running.
+-   **[CoinGecko](https://www.coingecko.com/en/api)**: Obtain an API key from CoinGecko.
+-   **[CoinMarketCap](https://www.coingecko.com/en/api)**: Obtain an API key from CoinMarketCap.
+-   **Python 3 (Optional)**: Required for the simulator.
 
 ## Installation
 
@@ -18,37 +18,37 @@ To set up Carbon Backend, follow these steps:
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/bancorprotocol/carbon-backend
-   ```
+    ```bash
+    git clone https://github.com/bancorprotocol/carbon-backend
+    ```
 
 2. Navigate to the project directory:
 
-   ```bash
-   cd carbon-backend
-   ```
+    ```bash
+    cd carbon-backend
+    ```
 
 3. Install dependencies:
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 4. Configure environment variables:
 
-   Duplicate the `.env.example` file as `.env`:
+    Duplicate the `.env.example` file as `.env`:
 
-   ```bash
-   cp .env.example .env
-   ```
+    ```bash
+    cp .env.example .env
+    ```
 
-   Provide the required values in the `.env` file.
+    Provide the required values in the `.env` file.
 
 5. (Optional) If you wish to utilize the simulator feature, install the required Python packages:
 
-   ```bash
-   pip install -r src/simulator/requirements.txt
-   ```
+    ```bash
+    pip install -r src/simulator/requirements.txt
+    ```
 
 ## Usage
 
@@ -72,16 +72,16 @@ To switch Carbon Backend's network for different deployments, follow these steps
 
 1. **Replace Smart Contract Files**:
 
-   - Replace files in `src/contracts/mainnet` with those from the new deployment.
+    - Replace files in `src/contracts/mainnet` with those from the new deployment.
 
 2. **Modify CoinMarketCap Service**:
 
-   - Adjust `src/coinmarketcap/coinmarketcap.service.ts` to align with the new network.
-   - For guidance, check the [CoinMarketCap API documentation](https://coinmarketcap.com/api/documentation/v1/).
+    - Adjust `src/coinmarketcap/coinmarketcap.service.ts` to align with the new network.
+    - For guidance, check the [CoinMarketCap API documentation](https://coinmarketcap.com/api/documentation/v1/).
 
 3. **Modify CoinGecko Service**:
-   - Adjust `src/quote/coingecko.service.ts` to match the requirements of the new network.
-   - Refer to the [CoinGecko API documentation](https://docs.coingecko.com/) for assistance.
+    - Adjust `src/quote/coingecko.service.ts` to match the requirements of the new network.
+    - Refer to the [CoinGecko API documentation](https://docs.coingecko.com/) for assistance.
 
 By following these steps, you can seamlessly switch Carbon Backend's network to suit your deployment or environment.
 

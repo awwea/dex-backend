@@ -7,12 +7,8 @@ import { LastProcessedBlockModule } from '../last-processed-block/last-processed
 import { BlockchainConfigModule } from '../blockchain-config/blockchain-config.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Block]),
-    LastProcessedBlockModule,
-    BlockchainConfigModule,
-  ],
-  providers: [ConfigService, BlockService],
-  exports: [BlockService, TypeOrmModule.forFeature([Block])],
+    imports: [TypeOrmModule.forFeature([Block]), LastProcessedBlockModule, BlockchainConfigModule],
+    providers: [ConfigService, BlockService],
+    exports: [BlockService, TypeOrmModule.forFeature([Block])],
 })
 export class BlockModule {}

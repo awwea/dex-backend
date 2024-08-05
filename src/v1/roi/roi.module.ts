@@ -4,9 +4,9 @@ import { RoiService } from './roi.service';
 import { StrategyModule } from '../../strategy/strategy.module';
 
 @Module({
-  imports: [StrategyModule],
-  controllers: [RoiController],
-  providers: [RoiService],
-  exports: [RoiService],
+    imports: [StrategyModule],
+    controllers: [RoiController],
+    providers: [RoiService],
+    exports: [RoiService],
 })
 export class RoiModule {}

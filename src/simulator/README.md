@@ -19,6 +19,7 @@ The name of the output simulation file should be provided within the command-lin
 The name of the output log file can be provided within the input configuration file.
 
 ## Execution
+
 ```
 python run.py
 -c <config-file-name> | --config-file-name <config-file-name>
@@ -26,6 +27,7 @@ python run.py
 ```
 
 ## Verification
+
 ```
 python test.py
 ```

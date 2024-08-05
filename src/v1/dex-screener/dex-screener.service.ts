@@ -10,25 +10,25 @@ const PAIRS_CACHE_KEY = 'carbon:dexScreener:pairs';
 
 @Injectable()
 export class DexScreenerService {
-  constructor(
-    @InjectRepository(Strategy) private strategy: Repository<Strategy>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+    constructor(
+        @InjectRepository(Strategy) private strategy: Repository<Strategy>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) {}
 
-  async update(): Promise<void> {
-    const events = await this.getEvents();
-    this.cacheManager.set(EVENTS_CACHE_KEY, events);
+    async update(): Promise<void> {
+        const events = await this.getEvents();
+        this.cacheManager.set(EVENTS_CACHE_KEY, events);
 
-    const pairs = await this.getPairs();
-    this.cacheManager.set(PAIRS_CACHE_KEY, pairs);
-  }
+        const pairs = await this.getPairs();
+        this.cacheManager.set(PAIRS_CACHE_KEY, pairs);
+    }
 
-  async getCachedEvents(): Promise<any> {
-    return this.cacheManager.get(EVENTS_CACHE_KEY);
-  }
+    async getCachedEvents(): Promise<any> {
+        return this.cacheManager.get(EVENTS_CACHE_KEY);
+    }
 
-  private async getEvents(): Promise<any> {
-    const query = `WITH created AS (
+    private async getEvents(): Promise<any> {
+        const query = `WITH created AS (
     SELECT
         sce.timestamp AS blockTimestamp,
         sce."blockId" AS blockNumber,
@@ -514,23 +514,23 @@ FROM
 ORDER BY
     blockNumber`;
 
-    const result = await this.strategy.query(query);
-    result.forEach((r) => {
-      for (const [key, value] of Object.entries(r)) {
-        if (value === null) {
-          r[key] = 0;
-        }
-      }
-    });
-    return result;
-  }
+        const result = await this.strategy.query(query);
+        result.forEach((r) => {
+            for (const [key, value] of Object.entries(r)) {
+                if (value === null) {
+                    r[key] = 0;
+                }
+            }
+        });
+        return result;
+    }
 
-  async getCachedPairs(): Promise<any> {
-    return this.cacheManager.get(PAIRS_CACHE_KEY);
-  }
+    async getCachedPairs(): Promise<any> {
+        return this.cacheManager.get(PAIRS_CACHE_KEY);
+    }
 
-  private async getPairs(): Promise<any> {
-    const query = `WITH pairs AS (
+    private async getPairs(): Promise<any> {
+        const query = `WITH pairs AS (
       SELECT
           id,
           'carbondefi' AS dexKey,
@@ -594,14 +594,14 @@ ORDER BY
   FROM
       pairsWithFee`;
 
-    const result = await this.strategy.query(query);
-    result.forEach((r) => {
-      for (const [key, value] of Object.entries(r)) {
-        if (value === null) {
-          r[key] = 0;
-        }
-      }
-    });
-    return result;
-  }
+        const result = await this.strategy.query(query);
+        result.forEach((r) => {
+            for (const [key, value] of Object.entries(r)) {
+                if (value === null) {
+                    r[key] = 0;
+                }
+            }
+        });
+        return result;
+    }
 }

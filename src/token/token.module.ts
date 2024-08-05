@@ -9,14 +9,14 @@ import { TokenService } from './token.service';
 import { PairCreatedEventModule } from '../events/pair-created-event/pair-created-event.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Token]),
-    LastProcessedBlockModule,
-    RedisModule,
-    HarvesterModule,
-    PairCreatedEventModule,
-  ],
-  providers: [ConfigService, TokenService],
-  exports: [TokenService, TypeOrmModule.forFeature([Token])],
+    imports: [
+        TypeOrmModule.forFeature([Token]),
+        LastProcessedBlockModule,
+        RedisModule,
+        HarvesterModule,
+        PairCreatedEventModule,
+    ],
+    providers: [ConfigService, TokenService],
+    exports: [TokenService, TypeOrmModule.forFeature([Token])],
 })
 export class TokenModule {}

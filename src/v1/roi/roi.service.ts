@@ -9,22 +9,22 @@ const ROI_CACHE_KEY = 'carbon:roi';
 
 @Injectable()
 export class RoiService {
-  constructor(
-    @InjectRepository(Strategy) private strategy: Repository<Strategy>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+    constructor(
+        @InjectRepository(Strategy) private strategy: Repository<Strategy>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) {}
 
-  async update(): Promise<void> {
-    const roi = await this.getROI();
-    this.cacheManager.set(ROI_CACHE_KEY, roi);
-  }
+    async update(): Promise<void> {
+        const roi = await this.getROI();
+        this.cacheManager.set(ROI_CACHE_KEY, roi);
+    }
 
-  async getCachedROI(): Promise<any> {
-    return this.cacheManager.get(ROI_CACHE_KEY);
-  }
+    async getCachedROI(): Promise<any> {
+        return this.cacheManager.get(ROI_CACHE_KEY);
+    }
 
-  private async getROI(): Promise<any> {
-    const query = `
+    private async getROI(): Promise<any> {
+        const query = `
     WITH created AS (
         SELECT timestamp as evt_block_time, "blockId" as evt_block_number, s.id as id, order0, order1, 
         t0.address as token0, t0.symbol as symbol0, t0.decimals as decimals0,
@@ -284,14 +284,14 @@ export class RoiService {
     ORDER BY ROI DESC;
     `;
 
-    const result = await this.strategy.query(query);
-    return result.map((r) => {
-      if (r.roi === null || r.roi <= -100) {
-        r.roi = 0;
-      }
-      r.ROI = r.roi;
-      delete r.roi;
-      return r;
-    });
-  }
+        const result = await this.strategy.query(query);
+        return result.map((r) => {
+            if (r.roi === null || r.roi <= -100) {
+                r.roi = 0;
+            }
+            r.ROI = r.roi;
+            delete r.roi;
+            return r;
+        });
+    }
 }

@@ -10,15 +10,15 @@ import { PairController } from './pair.controller';
 import { PairCreatedEventModule } from '../events/pair-created-event/pair-created-event.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Pair]),
-    LastProcessedBlockModule,
-    RedisModule,
-    HarvesterModule,
-    PairCreatedEventModule,
-  ],
-  providers: [ConfigService, PairService],
-  exports: [PairService, TypeOrmModule.forFeature([Pair])],
-  controllers: [PairController],
+    imports: [
+        TypeOrmModule.forFeature([Pair]),
+        LastProcessedBlockModule,
+        RedisModule,
+        HarvesterModule,
+        PairCreatedEventModule,
+    ],
+    providers: [ConfigService, PairService],
+    exports: [PairService, TypeOrmModule.forFeature([Pair])],
+    controllers: [PairController],
 })
 export class PairModule {}

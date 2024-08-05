@@ -6,11 +6,8 @@ import { StrategyCreatedEvent } from './strategy-created-event.entity';
 import { StrategyCreatedEventService } from './strategy-created-event.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StrategyCreatedEvent]), HarvesterModule],
-  providers: [ConfigService, StrategyCreatedEventService],
-  exports: [
-    StrategyCreatedEventService,
-    TypeOrmModule.forFeature([StrategyCreatedEvent]),
-  ],
+    imports: [TypeOrmModule.forFeature([StrategyCreatedEvent]), HarvesterModule],
+    providers: [ConfigService, StrategyCreatedEventService],
+    exports: [StrategyCreatedEventService, TypeOrmModule.forFeature([StrategyCreatedEvent])],
 })
 export class StrategyCreatedEventModule {}

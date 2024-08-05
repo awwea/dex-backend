@@ -6,8 +6,11 @@ import { PairTradingFeePpmUpdatedEvent } from './pair-trading-fee-ppm-updated-ev
 import { PairTradingFeePpmUpdatedEventService } from './pair-trading-fee-ppm-updated-event.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PairTradingFeePpmUpdatedEvent]), HarvesterModule],
-  providers: [ConfigService, PairTradingFeePpmUpdatedEventService],
-  exports: [PairTradingFeePpmUpdatedEventService, TypeOrmModule.forFeature([PairTradingFeePpmUpdatedEvent])],
+    imports: [TypeOrmModule.forFeature([PairTradingFeePpmUpdatedEvent]), HarvesterModule],
+    providers: [ConfigService, PairTradingFeePpmUpdatedEventService],
+    exports: [
+        PairTradingFeePpmUpdatedEventService,
+        TypeOrmModule.forFeature([PairTradingFeePpmUpdatedEvent]),
+    ],
 })
 export class PairTradingFeePpmUpdatedEventModule {}

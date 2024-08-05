@@ -5,11 +5,8 @@ import { LastProcessedBlockService } from './last-processed-block.service';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LastProcessedBlock])],
-  providers: [ConfigService, LastProcessedBlockService],
-  exports: [
-    LastProcessedBlockService,
-    TypeOrmModule.forFeature([LastProcessedBlock]),
-  ],
+    imports: [TypeOrmModule.forFeature([LastProcessedBlock])],
+    providers: [ConfigService, LastProcessedBlockService],
+    exports: [LastProcessedBlockService, TypeOrmModule.forFeature([LastProcessedBlock])],
 })
 export class LastProcessedBlockModule {}

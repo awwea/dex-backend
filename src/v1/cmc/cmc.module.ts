@@ -5,7 +5,7 @@ import { TokensTradedEventModule } from 'src/events/tokens-traded-event/tokens-t
 import { PairModule } from '../../pair/pair.module';
 
 @Module({
-  imports: [StrategyModule, TokensTradedEventModule, PairModule],
-  controllers: [CmcController],
+    imports: [StrategyModule, TokensTradedEventModule, PairModule],
+    controllers: [CmcController],
 })
 export class CmcModule {}

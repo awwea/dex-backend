@@ -11,28 +11,28 @@ const ANALYTICS_GENERIC_METRICS_KEY = 'carbon:generic-metrics:tvl';
 
 @Injectable()
 export class AnalyticsService {
-  constructor(
-    @InjectRepository(Strategy) private strategy: Repository<Strategy>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+    constructor(
+        @InjectRepository(Strategy) private strategy: Repository<Strategy>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
+    ) {}
 
-  async update(): Promise<void> {
-    const tvl = await this.getTVL();
-    this.cacheManager.set(ANALYTICS_TVL_CACHE_KEY, tvl);
+    async update(): Promise<void> {
+        const tvl = await this.getTVL();
+        this.cacheManager.set(ANALYTICS_TVL_CACHE_KEY, tvl);
 
-    const volume = await this.getVolume();
-    this.cacheManager.set(ANALYTICS_VOLUME_CACHE_KEY, volume);
+        const volume = await this.getVolume();
+        this.cacheManager.set(ANALYTICS_VOLUME_CACHE_KEY, volume);
 
-    const generic = await this.getGenericMetrics();
-    this.cacheManager.set(ANALYTICS_GENERIC_METRICS_KEY, generic);
-  }
+        const generic = await this.getGenericMetrics();
+        this.cacheManager.set(ANALYTICS_GENERIC_METRICS_KEY, generic);
+    }
 
-  async getCachedTVL(): Promise<any> {
-    return this.cacheManager.get(ANALYTICS_TVL_CACHE_KEY);
-  }
+    async getCachedTVL(): Promise<any> {
+        return this.cacheManager.get(ANALYTICS_TVL_CACHE_KEY);
+    }
 
-  private async getTVL(): Promise<any> {
-    const query = `WITH created AS (
+    private async getTVL(): Promise<any> {
+        const query = `WITH created AS (
         SELECT
             timestamp AS evt_block_time,
             "blockId" AS evt_block_number,
@@ -362,16 +362,16 @@ export class AnalyticsService {
     ORDER BY
         timestamp`;
 
-    const result = await this.strategy.query(query);
-    return result;
-  }
+        const result = await this.strategy.query(query);
+        return result;
+    }
 
-  async getCachedVolume(): Promise<any> {
-    return this.cacheManager.get(ANALYTICS_VOLUME_CACHE_KEY);
-  }
+    async getCachedVolume(): Promise<any> {
+        return this.cacheManager.get(ANALYTICS_VOLUME_CACHE_KEY);
+    }
 
-  private async getVolume(): Promise<any> {
-    const query = `WITH tokens_traded_with_token_info AS (
+    private async getVolume(): Promise<any> {
+        const query = `WITH tokens_traded_with_token_info AS (
     SELECT
         tte."timestamp" AS timestamp,
         tte."transactionHash" AS transactionHash,
@@ -479,16 +479,16 @@ FROM
 ORDER BY
     timestamp`;
 
-    const result = await this.strategy.query(query);
-    return result;
-  }
+        const result = await this.strategy.query(query);
+        return result;
+    }
 
-  async getCachedGenericMetrics(): Promise<any> {
-    return this.cacheManager.get(ANALYTICS_GENERIC_METRICS_KEY);
-  }
+    async getCachedGenericMetrics(): Promise<any> {
+        return this.cacheManager.get(ANALYTICS_GENERIC_METRICS_KEY);
+    }
 
-  private async getGenericMetrics(): Promise<any> {
-    const query = `WITH filtered_strategies AS (
+    private async getGenericMetrics(): Promise<any> {
+        const query = `WITH filtered_strategies AS (
         SELECT
             *
         FROM
@@ -703,7 +703,7 @@ ORDER BY
         fee_volume fv,
         latest_updated_block lub`;
 
-    const result = await this.strategy.query(query);
-    return result;
-  }
+        const result = await this.strategy.query(query);
+        return result;
+    }
 }

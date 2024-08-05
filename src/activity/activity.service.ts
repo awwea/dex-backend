@@ -8,19 +8,19 @@ import { ActivityMetaDto } from '../v1/activity/activity-meta.dto';
 
 @Injectable()
 export class ActivityService {
-  constructor(
-    @InjectRepository(Activity)
-    private activityRepository: Repository<Activity>,
-    private lastProcessedBlockService: LastProcessedBlockService,
-    private dataSource: DataSource,
-  ) {}
+    constructor(
+        @InjectRepository(Activity)
+        private activityRepository: Repository<Activity>,
+        private lastProcessedBlockService: LastProcessedBlockService,
+        private dataSource: DataSource
+    ) {}
 
-  async update(endBlock: number): Promise<void> {
-    // Get the last processed block number
-    const startBlock = (await this.lastProcessedBlockService.get('activities')) || 1;
+    async update(endBlock: number): Promise<void> {
+        // Get the last processed block number
+        const startBlock = (await this.lastProcessedBlockService.get('activities')) || 1;
 
-    // Query to get the activity data
-    const query = `-- Find the most recent event FROM each strategy to determine who needs updating
+        // Query to get the activity data
+        const query = `-- Find the most recent event FROM each strategy to determine who needs updating
 WITH selector_created AS (
     SELECT 
         "id" AS "strategyId", "blockId", 'created' AS current_state
@@ -979,235 +979,269 @@ WHERE deleteme IS FALSE
 ORDER BY block_number, sorting_order
 `;
 
-    const result = await this.dataSource.query(query);
-    const batchSize = 1000;
-    for (let i = 0; i < result.length; i += batchSize) {
-      const batch = result.slice(i, i + batchSize).map((record) => ({
-        creationWallet: record.creation_wallet,
-        currentOwner: record.current_owner,
-        oldOwner: record.old_owner,
-        newOwner: record.new_owner,
-        strategyId: record.id,
-        action: record.action,
-        baseQuote: record.base_quote,
-        baseSellToken: record.base_sell_token,
-        baseSellTokenAddress: record.base_sell_token_address,
-        quoteBuyToken: record.quote_buy_token,
-        quoteBuyTokenAddress: record.quote_buy_token_address,
-        buyBudget: record.buy_budget,
-        sellBudget: record.sell_budget,
-        buyBudgetChange: record.buy_budget_change,
-        sellBudgetChange: record.sell_budget_change,
-        buyPriceA: record.buy_price_a,
-        buyPriceMarg: record.buy_price_marg,
-        buyPriceB: record.buy_price_b,
-        sellPriceA: record.sell_price_a,
-        sellPriceMarg: record.sell_price_marg,
-        sellPriceB: record.sell_price_b,
-        buyPriceADelta: record.buy_price_a_delta,
-        buyPriceMargDelta: record.buy_price_marg_delta,
-        buyPriceBDelta: record.buy_price_b_delta,
-        sellPriceADelta: record.sell_price_a_delta,
-        sellPriceMargDelta: record.sell_price_marg_delta,
-        sellPriceBDelta: record.sell_price_b_delta,
-        strategySold: record.strategy_sold,
-        tokenSold: record.token_sold,
-        strategyBought: record.strategy_bought,
-        tokenBought: record.token_bought,
-        avgPrice: record.avg_price,
-        timestamp: record.date,
-        txhash: record.txhash,
-        blockNumber: record.block_number,
-      }));
-      await this.activityRepository.save(batch);
+        const result = await this.dataSource.query(query);
+        const batchSize = 1000;
+        for (let i = 0; i < result.length; i += batchSize) {
+            const batch = result.slice(i, i + batchSize).map((record) => ({
+                creationWallet: record.creation_wallet,
+                currentOwner: record.current_owner,
+                oldOwner: record.old_owner,
+                newOwner: record.new_owner,
+                strategyId: record.id,
+                action: record.action,
+                baseQuote: record.base_quote,
+                baseSellToken: record.base_sell_token,
+                baseSellTokenAddress: record.base_sell_token_address,
+                quoteBuyToken: record.quote_buy_token,
+                quoteBuyTokenAddress: record.quote_buy_token_address,
+                buyBudget: record.buy_budget,
+                sellBudget: record.sell_budget,
+                buyBudgetChange: record.buy_budget_change,
+                sellBudgetChange: record.sell_budget_change,
+                buyPriceA: record.buy_price_a,
+                buyPriceMarg: record.buy_price_marg,
+                buyPriceB: record.buy_price_b,
+                sellPriceA: record.sell_price_a,
+                sellPriceMarg: record.sell_price_marg,
+                sellPriceB: record.sell_price_b,
+                buyPriceADelta: record.buy_price_a_delta,
+                buyPriceMargDelta: record.buy_price_marg_delta,
+                buyPriceBDelta: record.buy_price_b_delta,
+                sellPriceADelta: record.sell_price_a_delta,
+                sellPriceMargDelta: record.sell_price_marg_delta,
+                sellPriceBDelta: record.sell_price_b_delta,
+                strategySold: record.strategy_sold,
+                tokenSold: record.token_sold,
+                strategyBought: record.strategy_bought,
+                tokenBought: record.token_bought,
+                avgPrice: record.avg_price,
+                timestamp: record.date,
+                txhash: record.txhash,
+                blockNumber: record.block_number,
+            }));
+            await this.activityRepository.save(batch);
+        }
+
+        // Update the last processed block number
+        await this.lastProcessedBlockService.update('activities', endBlock);
     }
 
-    // Update the last processed block number
-    await this.lastProcessedBlockService.update('activities', endBlock);
-  }
+    async getFilteredActivities(params: ActivityDto | ActivityMetaDto): Promise<Activity[]> {
+        const queryBuilder = this.activityRepository.createQueryBuilder('activity');
 
-  async getFilteredActivities(params: ActivityDto | ActivityMetaDto): Promise<Activity[]> {
-    const queryBuilder = this.activityRepository.createQueryBuilder('activity');
+        if (params.start) {
+            queryBuilder.andWhere('activity.timestamp >= :start', {
+                start: new Date(params.start * 1000),
+            });
+        }
 
-    if (params.start) {
-      queryBuilder.andWhere('activity.timestamp >= :start', { start: new Date(params.start * 1000) });
-    }
+        if (params.end) {
+            queryBuilder.andWhere('activity.timestamp <= :end', {
+                end: new Date(params.end * 1000),
+            });
+        }
 
-    if (params.end) {
-      queryBuilder.andWhere('activity.timestamp <= :end', { end: new Date(params.end * 1000) });
-    }
-
-    if (params.actions) {
-      const actionsArray = Array.isArray(params.actions) ? params.actions : [params.actions];
-      queryBuilder.andWhere(
-        new Brackets((qb) => {
-          actionsArray.forEach((action, index) => {
-            qb.orWhere(`activity.action LIKE :action${index}`, { [`action${index}`]: `%${action}%` });
-          });
-        }),
-      );
-    }
-
-    if (params.ownerId) {
-      queryBuilder.andWhere('(activity.creationWallet = :ownerId OR activity.currentOwner = :ownerId)', {
-        ownerId: params.ownerId,
-      });
-    }
-
-    if (params.strategyIds) {
-      const strategyIds = params.strategyIds.split(',');
-      queryBuilder.andWhere('activity."strategyId" IN (:...strategyIds)', { strategyIds });
-    }
-
-    if (params.pairs) {
-      const pairs = params.pairs.split(',').map((pair) => pair.split('_').sort());
-      queryBuilder.andWhere(
-        new Brackets((qb) => {
-          pairs.forEach((pair) => {
-            qb.orWhere(
-              '(LOWER(activity.quoteBuyTokenAddress) = :pair0 AND LOWER(activity.baseSellTokenAddress) = :pair1)',
-              { pair0: pair[0].toLowerCase(), pair1: pair[1].toLowerCase() },
+        if (params.actions) {
+            const actionsArray = Array.isArray(params.actions) ? params.actions : [params.actions];
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    actionsArray.forEach((action, index) => {
+                        qb.orWhere(`activity.action LIKE :action${index}`, {
+                            [`action${index}`]: `%${action}%`,
+                        });
+                    });
+                })
             );
-          });
-        }),
-      );
-    }
+        }
 
-    if (params.token0 && !params.token1) {
-      queryBuilder.andWhere(
-        '(LOWER(activity.quoteBuyTokenAddress) = :token0 OR LOWER(activity.baseSellTokenAddress) = :token0)',
-        { token0: params.token0.toLowerCase() },
-      );
-    }
-
-    if (params.token1 && !params.token0) {
-      queryBuilder.andWhere(
-        '(LOWER(activity.quoteBuyTokenAddress) = :token1 OR LOWER(activity.baseSellTokenAddress) = :token1)',
-        { token1: params.token1.toLowerCase() },
-      );
-    }
-
-    if (params.token0 && params.token1) {
-      queryBuilder.andWhere(
-        '(LOWER(activity.quoteBuyTokenAddress) IN (:...tokens) AND LOWER(activity.baseSellTokenAddress) IN (:...tokens))',
-        { tokens: [params.token0.toLowerCase(), params.token1.toLowerCase()] },
-      );
-    }
-
-    queryBuilder.orderBy('activity.timestamp', 'DESC');
-
-    if ('limit' in params && params.limit) {
-      queryBuilder.take(params.limit);
-    }
-
-    if ('offset' in params && params.offset) {
-      queryBuilder.skip(params.offset);
-    }
-
-    return queryBuilder.getMany();
-  }
-
-  async getActivityMeta(params: ActivityMetaDto): Promise<any> {
-    const baseQueryBuilder = this.activityRepository.createQueryBuilder('activity');
-
-    if (params.start) {
-      baseQueryBuilder.andWhere('activity.timestamp >= :start', { start: new Date(params.start * 1000) });
-    }
-
-    if (params.end) {
-      baseQueryBuilder.andWhere('activity.timestamp <= :end', { end: new Date(params.end * 1000) });
-    }
-
-    if (params.actions) {
-      const actionsArray = Array.isArray(params.actions) ? params.actions : [params.actions];
-      baseQueryBuilder.andWhere(
-        new Brackets((qb) => {
-          actionsArray.forEach((action, index) => {
-            qb.orWhere(`activity.action LIKE :action${index}`, { [`action${index}`]: `%${action}%` });
-          });
-        }),
-      );
-    }
-
-    if (params.ownerId) {
-      baseQueryBuilder.andWhere('(activity.creationWallet = :ownerId OR activity.currentOwner = :ownerId)', {
-        ownerId: params.ownerId,
-      });
-    }
-
-    if (params.strategyIds) {
-      const strategyIds = params.strategyIds.split(',');
-      baseQueryBuilder.andWhere('activity."strategyId" IN (:...strategyIds)', { strategyIds });
-    }
-
-    if (params.pairs) {
-      const pairs = params.pairs.split(',').map((pair) => pair.split('_').sort());
-      baseQueryBuilder.andWhere(
-        new Brackets((qb) => {
-          pairs.forEach((pair) => {
-            qb.orWhere(
-              '(LOWER(activity.quoteBuyTokenAddress) = :pair0 AND LOWER(activity.baseSellTokenAddress) = :pair1)',
-              { pair0: pair[0].toLowerCase(), pair1: pair[1].toLowerCase() },
+        if (params.ownerId) {
+            queryBuilder.andWhere(
+                '(activity.creationWallet = :ownerId OR activity.currentOwner = :ownerId)',
+                {
+                    ownerId: params.ownerId,
+                }
             );
-          });
-        }),
-      );
+        }
+
+        if (params.strategyIds) {
+            const strategyIds = params.strategyIds.split(',');
+            queryBuilder.andWhere('activity."strategyId" IN (:...strategyIds)', { strategyIds });
+        }
+
+        if (params.pairs) {
+            const pairs = params.pairs.split(',').map((pair) => pair.split('_').sort());
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    pairs.forEach((pair) => {
+                        qb.orWhere(
+                            '(LOWER(activity.quoteBuyTokenAddress) = :pair0 AND LOWER(activity.baseSellTokenAddress) = :pair1)',
+                            { pair0: pair[0].toLowerCase(), pair1: pair[1].toLowerCase() }
+                        );
+                    });
+                })
+            );
+        }
+
+        if (params.token0 && !params.token1) {
+            queryBuilder.andWhere(
+                '(LOWER(activity.quoteBuyTokenAddress) = :token0 OR LOWER(activity.baseSellTokenAddress) = :token0)',
+                { token0: params.token0.toLowerCase() }
+            );
+        }
+
+        if (params.token1 && !params.token0) {
+            queryBuilder.andWhere(
+                '(LOWER(activity.quoteBuyTokenAddress) = :token1 OR LOWER(activity.baseSellTokenAddress) = :token1)',
+                { token1: params.token1.toLowerCase() }
+            );
+        }
+
+        if (params.token0 && params.token1) {
+            queryBuilder.andWhere(
+                '(LOWER(activity.quoteBuyTokenAddress) IN (:...tokens) AND LOWER(activity.baseSellTokenAddress) IN (:...tokens))',
+                { tokens: [params.token0.toLowerCase(), params.token1.toLowerCase()] }
+            );
+        }
+
+        queryBuilder.orderBy('activity.timestamp', 'DESC');
+
+        if ('limit' in params && params.limit) {
+            queryBuilder.take(params.limit);
+        }
+
+        if ('offset' in params && params.offset) {
+            queryBuilder.skip(params.offset);
+        }
+
+        return queryBuilder.getMany();
     }
 
-    if (params.token0 && !params.token1) {
-      baseQueryBuilder.andWhere(
-        '(LOWER(activity.quoteBuyTokenAddress) = :token0 OR LOWER(activity.baseSellTokenAddress) = :token0)',
-        { token0: params.token0.toLowerCase() },
-      );
+    async getActivityMeta(params: ActivityMetaDto): Promise<any> {
+        const baseQueryBuilder = this.activityRepository.createQueryBuilder('activity');
+
+        if (params.start) {
+            baseQueryBuilder.andWhere('activity.timestamp >= :start', {
+                start: new Date(params.start * 1000),
+            });
+        }
+
+        if (params.end) {
+            baseQueryBuilder.andWhere('activity.timestamp <= :end', {
+                end: new Date(params.end * 1000),
+            });
+        }
+
+        if (params.actions) {
+            const actionsArray = Array.isArray(params.actions) ? params.actions : [params.actions];
+            baseQueryBuilder.andWhere(
+                new Brackets((qb) => {
+                    actionsArray.forEach((action, index) => {
+                        qb.orWhere(`activity.action LIKE :action${index}`, {
+                            [`action${index}`]: `%${action}%`,
+                        });
+                    });
+                })
+            );
+        }
+
+        if (params.ownerId) {
+            baseQueryBuilder.andWhere(
+                '(activity.creationWallet = :ownerId OR activity.currentOwner = :ownerId)',
+                {
+                    ownerId: params.ownerId,
+                }
+            );
+        }
+
+        if (params.strategyIds) {
+            const strategyIds = params.strategyIds.split(',');
+            baseQueryBuilder.andWhere('activity."strategyId" IN (:...strategyIds)', {
+                strategyIds,
+            });
+        }
+
+        if (params.pairs) {
+            const pairs = params.pairs.split(',').map((pair) => pair.split('_').sort());
+            baseQueryBuilder.andWhere(
+                new Brackets((qb) => {
+                    pairs.forEach((pair) => {
+                        qb.orWhere(
+                            '(LOWER(activity.quoteBuyTokenAddress) = :pair0 AND LOWER(activity.baseSellTokenAddress) = :pair1)',
+                            { pair0: pair[0].toLowerCase(), pair1: pair[1].toLowerCase() }
+                        );
+                    });
+                })
+            );
+        }
+
+        if (params.token0 && !params.token1) {
+            baseQueryBuilder.andWhere(
+                '(LOWER(activity.quoteBuyTokenAddress) = :token0 OR LOWER(activity.baseSellTokenAddress) = :token0)',
+                { token0: params.token0.toLowerCase() }
+            );
+        }
+
+        if (params.token1 && !params.token0) {
+            baseQueryBuilder.andWhere(
+                '(LOWER(activity.quoteBuyTokenAddress) = :token1 OR LOWER(activity.baseSellTokenAddress) = :token1)',
+                { token1: params.token1.toLowerCase() }
+            );
+        }
+
+        if (params.token0 && params.token1) {
+            baseQueryBuilder.andWhere(
+                '(LOWER(activity.quoteBuyTokenAddress) IN (:...tokens) AND LOWER(activity.baseSellTokenAddress) IN (:...tokens))',
+                { tokens: [params.token0.toLowerCase(), params.token1.toLowerCase()] }
+            );
+        }
+
+        const countQuery = baseQueryBuilder.clone().getCount();
+
+        const actionsQuery = baseQueryBuilder
+            .clone()
+            .select('activity.action')
+            .distinct(true)
+            .getRawMany();
+
+        const pairsQuery = baseQueryBuilder
+            .clone()
+            .select([
+                'LOWER(activity.quoteBuyTokenAddress) AS quote',
+                'LOWER(activity.baseSellTokenAddress) AS base',
+            ])
+            .groupBy('quote')
+            .addGroupBy('base')
+            .getRawMany();
+
+        const strategiesQuery = baseQueryBuilder
+            .clone()
+            .select([
+                'activity.strategyId',
+                'activity.baseSellTokenAddress',
+                'activity.quoteBuyTokenAddress',
+            ])
+            .distinct(true)
+            .getRawMany();
+
+        // Execute queries in parallel
+        const [size, actions, pairs, strategies] = await Promise.all([
+            countQuery,
+            actionsQuery,
+            pairsQuery,
+            strategiesQuery,
+        ]);
+
+        return {
+            size,
+            actions: actions.map((action) => action.activity_action),
+            pairs: pairs.map((pair) => [pair.quote, pair.base]),
+            strategies: strategies.reduce((acc, d) => {
+                acc[d.activity_strategyId] = [
+                    d.activity_baseSellTokenAddress,
+                    d.activity_quoteBuyTokenAddress,
+                ];
+                return acc;
+            }, {}),
+        };
     }
-
-    if (params.token1 && !params.token0) {
-      baseQueryBuilder.andWhere(
-        '(LOWER(activity.quoteBuyTokenAddress) = :token1 OR LOWER(activity.baseSellTokenAddress) = :token1)',
-        { token1: params.token1.toLowerCase() },
-      );
-    }
-
-    if (params.token0 && params.token1) {
-      baseQueryBuilder.andWhere(
-        '(LOWER(activity.quoteBuyTokenAddress) IN (:...tokens) AND LOWER(activity.baseSellTokenAddress) IN (:...tokens))',
-        { tokens: [params.token0.toLowerCase(), params.token1.toLowerCase()] },
-      );
-    }
-
-    const countQuery = baseQueryBuilder.clone().getCount();
-
-    const actionsQuery = baseQueryBuilder.clone().select('activity.action').distinct(true).getRawMany();
-
-    const pairsQuery = baseQueryBuilder
-      .clone()
-      .select(['LOWER(activity.quoteBuyTokenAddress) AS quote', 'LOWER(activity.baseSellTokenAddress) AS base'])
-      .groupBy('quote')
-      .addGroupBy('base')
-      .getRawMany();
-
-    const strategiesQuery = baseQueryBuilder
-      .clone()
-      .select(['activity.strategyId', 'activity.baseSellTokenAddress', 'activity.quoteBuyTokenAddress'])
-      .distinct(true)
-      .getRawMany();
-
-    // Execute queries in parallel
-    const [size, actions, pairs, strategies] = await Promise.all([
-      countQuery,
-      actionsQuery,
-      pairsQuery,
-      strategiesQuery,
-    ]);
-
-    return {
-      size,
-      actions: actions.map((action) => action.activity_action),
-      pairs: pairs.map((pair) => [pair.quote, pair.base]),
-      strategies: strategies.reduce((acc, d) => {
-        acc[d.activity_strategyId] = [d.activity_baseSellTokenAddress, d.activity_quoteBuyTokenAddress];
-        return acc;
-      }, {}),
-    };
-  }
 }
